@@ -26,22 +26,22 @@
             border: 2px solid #fff;
             border-radius: 25px;
             padding: 10px 20px;
-            transition: all 0.3s ease;
+            transition: box-shadow 0.3s ease;
         }
         .search-bar input {
             border: none;
             background: none;
             outline: none;
             color: #fff;
-            font-size: 16px;
-            width: 300px;
+            font-size: 1em;
+            width: 20em;
         }
         .search-bar button {
             border: none;
             background: none;
             cursor: pointer;
             color: #fff;
-            font-size: 16px;
+            font-size: 1em;
             outline: none;
         }
         .search-bar:hover {
@@ -54,7 +54,7 @@
             display: none;
             position: absolute;
             top: 50px;
-            width: calc(100% - 44px);
+            width: 100%;
             z-index: 1;
         }
         .suggestions ul {
@@ -83,6 +83,19 @@
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
         }
+        .gmail-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +109,7 @@
         </div>
     </div>
     <div class="background-shapes" id="background-shapes"></div>
+    <div class="gmail-button" onclick="openGmail()">✉️</div>
     <script>
         function handleSearch(event) {
             event.preventDefault();
@@ -149,6 +163,10 @@
                 suggestionsList.appendChild(li);
             });
             document.getElementById('suggestions').style.display = 'block';
+        }
+
+        function openGmail() {
+            window.location.href = 'https://mail.google.com/';
         }
 
         for (let i = 0; i < 40; i++) {
