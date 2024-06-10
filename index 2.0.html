@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Search Page</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: #0e0e0e;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+        .search-container {
+            position: relative;
+            z-index: 1;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            border: 2px solid #fff;
+            border-radius: 25px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+        .search-bar input {
+            border: none;
+            background: none;
+            outline: none;
+            color: #fff;
+            font-size: 16px;
+            width: 300px;
+        }
+        .search-bar button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+        .search-bar:hover {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        .suggestions {
+            background: #333;
+            border-radius: 0 0 25px 25px;
+            overflow: hidden;
+            display: none;
+            position: absolute;
+            top: 50px;
+            width: calc(100% - 44px);
+            z-index: 1;
+        }
+        .suggestions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .suggestions li {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .suggestions li:hover {
+            background: #444;
+        }
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <form class="search-bar" onsubmit="handleSearch(event)">
+            <input type="text" id="search-input" placeholder="Search..." oninput="fetchSuggestions(this.value)">
+            <button type="submit">🔍</button>
+        </form>
+        <div class="suggestions" id="suggestions">
+            <ul></ul>
+        </div>
+    </div>
+    <div class="background-shapes" id="background-shapes"></div>
+    <script>
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('search-input').value;
+            window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        }
+
+        function createShape() {
+            const shape = document.createElement('div');
+            shape.classList.add('shape');
+            const size = Math.random() * 50 + 50;
+            shape.style.width = `${size}px`;
+            shape.style.height = `${size}px`;
+            shape.style.top = `${Math.random() * 100}vh`;
+            shape.style.left = `${Math.random() * 100}vw`;
+            document.getElementById('background-shapes').appendChild(shape);
+        }
+
+        function adjustShapes(event) {
+            const shapes = document.querySelectorAll('.shape');
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const maxOffset = 50;
+
+            shapes.forEach(shape => {
+                const offsetX = ((mouseX - centerX) / centerX) * maxOffset;
+                const offsetY = ((mouseY - centerY) / centerY) * maxOffset;
+                shape.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            });
+        }
+
+        async function fetchSuggestions(query) {
+            if (query.length < 3) {
+                document.getElementById('suggestions').style.display = 'none';
+                return;
+            }
+            const response = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&q=${query}`);
+            const data = await response.json();
+            const suggestions = data[1];
+            const suggestionsList = document.getElementById('suggestions').querySelector('ul');
+            suggestionsList.innerHTML = '';
+            suggestions.forEach(suggestion => {
+                const li = document.createElement('li');
+                li.textContent = suggestion;
+                li.onclick = () => {
+                    document.getElementById('search-input').value = suggestion;
+                    handleSearch(new Event('submit'));
+                };
+                suggestionsList.appendChild(li);
+            });
+            document.getElementById('suggestions').style.display = 'block';
+        }
+
+        for (let i = 0; i < 40; i++) {
+            createShape();
+        }
+
+        document.addEventListener('mousemove', adjustShapes);
+    </script>
+</body>
+</html>
